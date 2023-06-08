@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'stock_detail.css' %}">
+
+    <title>Stock Detail</title>
+    
+</head>
+<body>
+    <h1>Stock Detail</h1>
+    <form method="POST" action="{% url 'stock:stock_detail' %}">
+        {% csrf_token %}
+        <label for="symbol">Symbol:</label>
+        <input type="text" id="symbol" name="symbol">
+        <br>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date">
+        <br>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date">
+        <br>
+        <input type="submit" value="Import Data">
+      </form>
+    {% if import_success %}
+        <p>Data imported successfully.</p>
+    {% endif %}
+</body>
+</html>
