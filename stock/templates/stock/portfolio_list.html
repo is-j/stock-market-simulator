@@ -1,0 +1,7 @@
+{% for portfolio in portfolios %}
+    <h3><a href="{% url 'portfolio_detail' portfolio.id %}">{{ portfolio.name }}</a></h3>
+{% empty %}
+    <p>No portfolios found.</p>
+{% endfor %}
+
+<a href="{% url 'create_portfolio' %}">Create New Portfolio</a>

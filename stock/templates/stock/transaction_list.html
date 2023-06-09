@@ -1,0 +1,28 @@
+{% extends 'stock/base.html' %}
+
+{% block title %}Transaction List{% endblock %}
+
+{% block content %}
+  <h2>Transaction List</h2>
+
+  <table>
+    <tr>
+      <th>Stock Symbol</th>
+      <th>Transaction Type</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Timestamp</th>
+    </tr>
+    {% for transaction in transactions %}
+      <tr>
+        <td>{{ transaction.stock.symbol }}</td>
+        <td>{{ transaction.transaction_type }}</td>
+        <td>{{ transaction.quantity }}</td>
+        <td>{{ transaction.price }}</td>
+        <td>{{ transaction.timestamp }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <a href="{% url 'create_transaction' %}">Create Transaction</a>
+{% endblock %}

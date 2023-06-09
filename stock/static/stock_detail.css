@@ -8,8 +8,8 @@ form,
 label,
 input,
 p {
-  margin: 50;
-  padding: 10;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -18,12 +18,17 @@ body {
   color: #333333;
 }
 
+
 .container {
   max-width: 1200px;
-  margin: 50 auto;
+  margin: 50px auto;
   padding: 90px;
-  background-color: #ffffff;
+  background-color: black;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Add the following properties to move the container */
+  position:absolute;
+  top: 50px;
+  left: 100px;
 }
 
 h1 {
@@ -37,7 +42,7 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 60;
+  margin-top: 60px;
 }
 
 label {
@@ -73,4 +78,9 @@ p {
   color: #666666;
   font-size: 18px;
   line-height: 1.4;
+}
+.graph{
+  position: relative;
+  top: 90px;
+
 }

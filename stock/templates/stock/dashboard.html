@@ -1,0 +1,41 @@
+
+{% extends 'stock/base.html' %}
+{% load static %}
+{% block content %}
+  <h2>Welcome, {{ user.username }}!</h2>
+
+  <h3>Portfolios:</h3>
+  <ul>
+    {% for portfolio in portfolios %}
+      <li>{{ portfolio.name }}</li>
+    {% empty %}
+      <li>No portfolios found.</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Transactions:</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Stock</th>
+        <th>Type</th>
+        <th>Quantity</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transactions %}
+        <tr>
+          <td>{{ transaction.stock.symbol }}</td>
+          <td>{{ transaction.transaction_type }}</td>
+          <td>{{ transaction.quantity }}</td>
+          <td>{{ transaction.price }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4">No transactions found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
