@@ -1,12 +1,14 @@
-import datetime
-import os
+import datetime, os, requests
 from django.http import HttpResponse
-from .models import Stock
-from django.shortcuts import render, get_object_or_404
-import requests
+from .models import Stock, Transaction, User, Portfolio
+from django.shortcuts import render, get_object_or_404, redirect
 from datetime import date
 import plotly.graph_objs as go
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from .forms import TransactionForm, UserCreationForm, UserRegistrationForm, PortfolioForm
 #Stock Detail View: This view provides detailed information about 
 # a specific stock, including its current price, description, 
 # and any other relevant data.
@@ -96,4 +98,116 @@ def stock_detail(request):
         return HttpResponse("Data imported successfully.") #Data
 
     return render(request, 'stock/stock_detail.html')
+
+
+@login_required
+def create_simulated_account(request):
+    # Check if the user already has a simulated account
+    if request.user.simulated_account:
+        messages.warning(request, "You already have a simulated account.")
+        return redirect('dashboard')
+
+    # Create a simulated portfolio for the user
+    Portfolio.objects.create(user=request.user, name="Simulated Portfolio")
+
+    # Set the simulated_account field to True for the user
+    request.user.simulated_account = True
+    request.user.save()
+
+    messages.success(request, "Simulated account created successfully.")
+    return redirect('dashboard')
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            # Create a new user
+            user = form.save(commit=False)
+
+            # Set the simulated_account field to True for the new user
+            user.simulated_account = True
+            user.save()
+
+            # Create a simulated portfolio for the new user
+            Portfolio.objects.create(user=user, name="Simulated Portfolio")
+
+            messages.success(request, "Simulated account created successfully. You can now log in.")
+            return redirect('login')
+    else:
+        form = UserRegistrationForm()
+    
+    return render(request, 'stock/register.html', {'form': form})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'stock/register.html', {'form': form})
+
+@login_required
+def dashboard(request):
+    user = request.user
+    portfolios = Portfolio.objects.filter(user=user)
+    transactions = Transaction.objects.filter(user=user)
+
+    context = {
+        'user': user,
+        'portfolios': portfolios,
+        'transactions': transactions,
+    }
+
+    return render(request, 'stock/dashboard.html', context)
+
+
+
+def transaction_list(request):
+    transactions = Transaction.objects.filter(user=request.user)
+    return render(request, 'stock/transaction_list.html', {'transactions': transactions})
+
+
+def create_transaction(request):
+    if request.method == 'POST':
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            transaction = form.save(commit=False)
+            transaction.user = request.user
+            transaction.save()
+            return redirect('transaction_list')
+    else:
+        form = TransactionForm()
+    return render(request, 'stock/create_transaction.html', {'form': form})
+
+
+def portfolio_list(request):
+    portfolios = Portfolio.objects.filter(user=request.user)
+    return render(request, 'stock/portfolio_list.html', {'portfolios': portfolios})
+
+def portfolio_detail(request, portfolio_id):
+    portfolio = get_object_or_404(Portfolio, id=portfolio_id, user=request.user)
+    return render(request, 'stock/portfolio_detail.html', {'portfolio': portfolio})
+
+def create_portfolio(request):
+    if request.method == 'POST':
+        form = PortfolioForm(request.POST)
+        if form.is_valid():
+            portfolio = form.save(commit=False)
+            portfolio.user = request.user
+            portfolio.save()
+            return redirect('portfolio_list')
+    else:
+        form = PortfolioForm()
+    return render(request, 'stock/create_portfolio.html', {'form': form})
+
+def delete_portfolio(request, portfolio_id):
+    portfolio = get_object_or_404(Portfolio, id=portfolio_id, user=request.user)
+    if request.method == 'POST':
+        portfolio.delete()
+        return redirect('portfolio_list')
+    return render(request, 'stock/delete_portfolio.html', {'portfolio': portfolio})
+
 
