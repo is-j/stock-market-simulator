@@ -93,7 +93,7 @@ def stock_detail(request):
             )
             stock.save()
 
-        return HttpResponse("Data imported successfully.")
+        return HttpResponse("Data imported successfully.") #Data
 
     return render(request, 'stock/stock_detail.html')
 
