@@ -61,7 +61,7 @@ def stock_detail(request):
         symbol = request.POST['symbol']  # Symbol of the stock to import
         start_date = request.POST['start_date']  # Start date for data import
         end_date = request.POST['end_date']  # End date for data import
-        api_key = 'nOFI_Q8AGlP4FqkozLAP0nukXwxlBkCQ'  # Replace with your Polygon.io API key
+        api_key = os.environ.get('API_KEY')  # Replace with your Polygon.io API key
 
         # Make API request to Polygon.io
         url = f'https://api.polygon.io/v2/aggs/ticker/{symbol}/range/1/day/{start_date}/{end_date}?apiKey={api_key}'
@@ -93,7 +93,7 @@ def stock_detail(request):
             )
             stock.save()
 
-        return HttpResponse("Data imported successfully.")
+        return HttpResponse("Data imported successfully.") #Data
 
     return render(request, 'stock/stock_detail.html')
 
